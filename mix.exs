@@ -1,4 +1,4 @@
-defmodule Rtp.MixProject do
+defmodule RTP.MixProject do
   use Mix.Project
 
   def project do
