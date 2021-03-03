@@ -1,6 +1,6 @@
-defmodule Rtp do
+defmodule RTP do
   @moduledoc """
-  Documentation for `Rtp`.
+  Documentation for `RTP`.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule Rtp do
 
   ## Examples
 
-      iex> Rtp.hello()
+      iex> RTP.hello()
       :world
 
   """
