@@ -3,12 +3,15 @@ defmodule RTP.Application do
 
   @impl true
   def start(_type, _args) do
-    Router.start()
-    Fetcher.init()
-
     children = [
-      # Starts a worker by calling: RTP.Worker.start_link(arg)
-      # {RTP.Worker, arg}
+      %{
+        id: Router,
+        start: {Router, :start, []}
+      },
+      %{
+        id: Fetcher,
+        start: {Fetcher, :init, []}
+      }
     ]
 
     opts = [strategy: :one_for_one, name: RTP.Supervisor]
