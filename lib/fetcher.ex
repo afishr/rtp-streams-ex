@@ -7,8 +7,8 @@ defmodule Fetcher do
     end
   end
 
-  def init() do
-    EventsourceEx.new("localhost:4000/tweets/1", stream_to: self())
+  def init(url) do
+    EventsourceEx.new(url, stream_to: self())
     fetch()
   end
 end

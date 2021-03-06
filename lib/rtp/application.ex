@@ -9,8 +9,12 @@ defmodule RTP.Application do
         start: {Router, :start, []}
       },
       %{
-        id: Fetcher,
-        start: {Fetcher, :init, []}
+        id: Fetcher1,
+        start: {Fetcher, :init, ["localhost:4000/tweets/1"]}
+      },
+      %{
+        id: Fetcher2,
+        start: {Fetcher, :init, ["localhost:4000/tweets/2"]}
       }
     ]
 
