@@ -3,7 +3,7 @@ defmodule RTP.Application do
 
   @impl true
   def start(_type, _args) do
-    Manager.start()
+    Router.start()
     Fetcher.init()
 
     children = [

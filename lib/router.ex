@@ -1,4 +1,4 @@
-defmodule Manager do
+defmodule Router do
   use GenServer
 
   def start() do
@@ -11,8 +11,8 @@ defmodule Manager do
     GenServer.start_link(__MODULE__, %{index: 0, children: children}, name: __MODULE__)
   end
 
-  def manage(tweet) do
-    GenServer.cast(__MODULE__, {:manage, tweet.data})
+  def route(tweet) do
+    GenServer.cast(__MODULE__, {:route, tweet.data})
   end
 
   @impl true
@@ -21,7 +21,7 @@ defmodule Manager do
   end
 
   @impl true
-  def handle_cast({:manage, tweet}, state) do
+  def handle_cast({:route, tweet}, state) do
     Enum.at(state.children, rem(state.index, 3))
     |> Tuple.to_list()
     |> Enum.at(1)

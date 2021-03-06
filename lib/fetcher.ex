@@ -2,7 +2,7 @@ defmodule Fetcher do
   def fetch() do
     receive do
       tweet ->
-        Manager.manage(tweet)
+        Router.route(tweet)
         fetch()
     end
   end
