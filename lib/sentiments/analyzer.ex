@@ -21,10 +21,10 @@ defmodule Sentiments.Analyzer do
   end
 
   def getWords(tweet) do
-    punctuation = [",", ".", ":", "?", "!"]
+    symbols = [",", ".", ":", "?", "!"]
 
     tweet["message"]["tweet"]["text"]
-    |> String.replace(punctuation, "")
+    |> String.replace(symbols, "")
     |> String.split(" ", trim: true)
   end
 
