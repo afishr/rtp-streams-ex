@@ -39,7 +39,7 @@ defmodule Router do
     if tweet != "{\"message\": panic}" do
       {:ok, tweet} = Poison.decode(tweet)
 
-      tweet
+      tweet["message"]["tweet"]
     end
   end
 end

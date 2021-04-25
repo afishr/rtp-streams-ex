@@ -23,7 +23,7 @@ defmodule Sentiments.Analyzer do
   def get_words(tweet) do
     symbols = [",", ".", ":", "?", "!"]
 
-    tweet["message"]["tweet"]["text"]
+    tweet["text"]
     |> String.replace(symbols, "")
     |> String.split(" ", trim: true)
   end
