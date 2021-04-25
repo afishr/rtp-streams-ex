@@ -14,13 +14,13 @@ defmodule Sentiments.Analyzer do
     {:ok, %{}}
   end
 
-  defp getScore(words) do
+  defp get_score(words) do
     words
     |> Enum.reduce(0, fn word, acc -> Sentiments.Words.getWordValue(word) + acc end)
     |> Kernel./(length(words))
   end
 
-  def getWords(tweet) do
+  def get_words(tweet) do
     symbols = [",", ".", ":", "?", "!"]
 
     tweet["message"]["tweet"]["text"]
@@ -28,7 +28,7 @@ defmodule Sentiments.Analyzer do
     |> String.split(" ", trim: true)
   end
 
-  defp computeScore(tweet) do
+  defp compute_score(tweet) do
     if tweet == "{\"message\": panic}" do
       IO.inspect(tweet)
     else
@@ -36,8 +36,8 @@ defmodule Sentiments.Analyzer do
 
       score =
         tweet
-        |> getWords()
-        |> getScore()
+        |> get_words()
+        |> get_score()
 
       IO.puts("Tweet score: " <> Float.to_string(score))
     end
@@ -45,7 +45,7 @@ defmodule Sentiments.Analyzer do
 
   @impl true
   def handle_cast({:compute, tweet}, _) do
-    computeScore(tweet)
+    compute_score(tweet)
     {:noreply, tweet}
   end
 end
