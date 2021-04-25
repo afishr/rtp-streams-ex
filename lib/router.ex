@@ -2,14 +2,25 @@ defmodule Router do
   use GenServer
 
   def start() do
-    children = [
+    sentiment_workers = [
       Sentiments.Analyzer.start(0),
       Sentiments.Analyzer.start(1),
       Sentiments.Analyzer.start(2),
       Sentiments.Analyzer.start(3)
     ]
 
-    GenServer.start_link(__MODULE__, %{index: 0, children: children}, name: __MODULE__)
+    engagement_workers = [
+      Engagement.Analyzer.start(4),
+      Engagement.Analyzer.start(5),
+      Engagement.Analyzer.start(6),
+      Engagement.Analyzer.start(7)
+    ]
+
+    GenServer.start_link(
+      __MODULE__,
+      %{index: 0, sentiment_workers: sentiment_workers, engagement_workers: engagement_workers},
+      name: __MODULE__
+    )
   end
 
   def route(tweet) do
@@ -26,12 +37,28 @@ defmodule Router do
     decoded_tweet = decode(tweet)
 
     if decoded_tweet do
-      {_, pid} = Enum.at(state.children, rem(state.index, length(state.children)))
-      GenServer.cast(pid, {:compute, decoded_tweet})
+      {_, sentiment_pid} =
+        Enum.at(state.sentiment_workers, rem(state.index, length(state.sentiment_workers)))
 
-      {:noreply, %{index: state.index + 1, children: state.children}}
+      {_, engagement_pid} =
+        Enum.at(state.engagement_workers, rem(state.index, length(state.engagement_workers)))
+
+      GenServer.cast(sentiment_pid, {:compute, decoded_tweet})
+      GenServer.cast(engagement_pid, {:compute, decoded_tweet})
+
+      {:noreply,
+       %{
+         index: state.index + 1,
+         sentiment_workers: state.sentiment_workers,
+         engagement_workers: state.engagement_workers
+       }}
     else
-      {:noreply, %{index: state.index, children: state.children}}
+      {:noreply,
+       %{
+         index: state.index,
+         sentiment_workers: state.sentiment_workers,
+         engagement_workers: state.engagement_workers
+       }}
     end
   end
 
