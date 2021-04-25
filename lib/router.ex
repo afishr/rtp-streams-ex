@@ -5,7 +5,8 @@ defmodule Router do
     children = [
       Sentiments.Analyzer.start(0),
       Sentiments.Analyzer.start(1),
-      Sentiments.Analyzer.start(2)
+      Sentiments.Analyzer.start(2),
+      Sentiments.Analyzer.start(3),
     ]
 
     GenServer.start_link(__MODULE__, %{index: 0, children: children}, name: __MODULE__)
@@ -22,10 +23,8 @@ defmodule Router do
 
   @impl true
   def handle_cast({:route, tweet}, state) do
-    Enum.at(state.children, rem(state.index, 3))
-    |> Tuple.to_list()
-    |> Enum.at(1)
-    |> GenServer.cast({:compute, tweet})
+    {_, pid} = Enum.at(state.children, rem(state.index, length(state.children)))
+    GenServer.cast(pid, {:compute, tweet})
 
     {:noreply, %{index: state.index + 1, children: state.children}}
   end
