@@ -30,13 +30,17 @@ defmodule Aggregator do
       Map.put(tweets, id, element)
     else
       sentiments_score =
-        Map.get(existing_tweet, :sentiments_score, Map.get(element, :sentiments_score, 0.0))
+        Map.get(existing_tweet, "sentiments_score", Map.get(element, "sentiments_score", 0.0))
 
       engagement_score =
-        Map.get(existing_tweet, :engagement_score, Map.get(element, :engagement_score, 0.0))
+        Map.get(existing_tweet, "engagement_score", Map.get(element, "engagement_score", 0.0))
 
-      existing_tweet = Map.put(existing_tweet, :sentiments_score, sentiments_score)
-      existing_tweet = Map.put(existing_tweet, :engagement_score, engagement_score)
+      existing_tweet = Map.put(existing_tweet, "sentiments_score", sentiments_score)
+      existing_tweet = Map.put(existing_tweet, "engagement_score", engagement_score)
+
+      {user, tweet} = Map.pop(existing_tweet, "user")
+
+      DB.save_one(tweet, user)
 
       Map.put(tweets, existing_tweet["id"], existing_tweet)
     end

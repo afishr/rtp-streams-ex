@@ -41,7 +41,7 @@ defmodule Sentiments.Analyzer do
   def handle_cast({:compute, tweet}, _) do
     score = compute_score(tweet)
 
-    Aggregator.add(Map.put(tweet, :sentiments_score, score))
+    Aggregator.add(Map.put(tweet, "sentiments_score", score))
 
     {:noreply, tweet}
   end
