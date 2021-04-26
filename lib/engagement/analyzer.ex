@@ -28,12 +28,14 @@ defmodule Engagement.Analyzer do
     retweets = tweet["retweet_count"]
     score = calculate(followers, favourites, retweets)
 
-    IO.puts("Engagement score: " <> Float.to_string(score))
+    score
   end
 
   @impl true
   def handle_cast({:compute, tweet}, _) do
-    compute_score(tweet)
+    score = compute_score(tweet)
+
+    Aggregator.add(Map.put(tweet, :engagement_score, score))
 
     {:noreply, tweet}
   end

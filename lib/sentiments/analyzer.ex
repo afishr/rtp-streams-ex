@@ -34,12 +34,15 @@ defmodule Sentiments.Analyzer do
       |> get_words()
       |> get_score()
 
-    IO.puts("Tweet score: " <> Float.to_string(score))
+    score
   end
 
   @impl true
   def handle_cast({:compute, tweet}, _) do
-    compute_score(tweet)
+    score = compute_score(tweet)
+
+    Aggregator.add(Map.put(tweet, :sentiments_score, score))
+
     {:noreply, tweet}
   end
 end
