@@ -4,7 +4,7 @@ defmodule DB do
   def start() do
     {:ok, conn} = Mongo.start_link(url: "mongodb://localhost:27013", database: "rtp")
 
-    GenServer.start_link(__MODULE__, %{connection: conn}, name: __MODULE__)
+    GenServer.start_link(__MODULE__, %{connection: conn, tweets: [], users: []}, name: __MODULE__)
   end
 
   @impl true
@@ -18,12 +18,24 @@ defmodule DB do
 
   @impl true
   def handle_cast({:save_one, tweet, user}, state) do
-    Mongo.insert_one(state.connection, "tweets", tweet)
-    Mongo.insert_one(state.connection, "users", user)
-
     IO.inspect(tweet)
-    IO.inspect(user)
+    if length(state.tweets) == 128 do
+      Mongo.insert_many(state.connection, "tweets", state.tweets)
+      Mongo.insert_many(state.connection, "users", state.users)
 
-    {:noreply, state}
+      {:noreply,
+       %{
+         connection: state.connection,
+         tweets: [],
+         users: []
+       }}
+    else
+      {:noreply,
+       %{
+         connection: state.connection,
+         tweets: [tweet | state.tweets],
+         users: [user | state.users]
+       }}
+    end
   end
 end

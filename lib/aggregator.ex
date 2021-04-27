@@ -38,9 +38,9 @@ defmodule Aggregator do
       existing_tweet = Map.put(existing_tweet, "sentiments_score", sentiments_score)
       existing_tweet = Map.put(existing_tweet, "engagement_score", engagement_score)
 
-      {user, tweet} = Map.pop(existing_tweet, "user")
+      {user, message} = Map.pop(existing_tweet, "user")
 
-      DB.save_one(tweet, user)
+      DB.save_one(message, user)
 
       Map.put(tweets, existing_tweet["id"], existing_tweet)
     end
