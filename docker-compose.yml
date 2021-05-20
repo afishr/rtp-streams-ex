@@ -1,0 +1,10 @@
+version: "3.6"
+services:
+  mongodb:
+    image: mongo
+    ports:
+      - 27013:27017
+  server:
+    image: alexburlacu/rtp-server:faf18x
+    ports:
+      - 4000:4000
