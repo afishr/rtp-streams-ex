@@ -21,7 +21,7 @@ defmodule Client do
   def handle_info(:connect, state) do
     # Logger.info "Connecting to #{:inet.ntoa(@ip)}:#{@port}"
 
-    case :gen_tcp.connect(@ip, @port, [:binary, active: true]) do
+    case :gen_tcp.connect('broker', @port, [:binary, active: true]) do
       {:ok, socket} ->
         {:noreply, %{state | socket: socket}}
       {:error, reason} ->
