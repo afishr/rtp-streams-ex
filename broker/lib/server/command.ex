@@ -1,6 +1,6 @@
 defmodule Command do
   def parse(line) do
-    case String.split(line) do
+    case String.split(line, " ", parts: 3) |> Enum.map(fn string -> String.trim(string) end) do
       ["PUBLISH", topic, data] -> {:ok, {:publish, topic, data}}
       ["SUBSCRIBE", topic] -> {:ok, {:subscribe, topic}}
       _ -> {:error, :unknown_command}

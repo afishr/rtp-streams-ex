@@ -2,7 +2,9 @@ defmodule Aggregator do
   use GenServer
 
   def start() do
-    GenServer.start_link(__MODULE__, %{tweets: %{}}, name: __MODULE__)
+    {:ok, pid} = Client.start
+
+    GenServer.start_link(__MODULE__, %{tweets: %{}, tcp: pid}, name: __MODULE__)
   end
 
   @impl true
@@ -18,7 +20,9 @@ defmodule Aggregator do
   def handle_cast({:add, tweet}, state) do
     tweets = add_tweet(tweet, state.tweets)
 
-    {:noreply, %{tweets: tweets}}
+    Client.send_message(state.tcp, "PUBLISH tweeter " <> Poison.encode!(tweet) <> "\n")
+
+    {:noreply, %{tweets: tweets, tcp: state.tcp}}
   end
 
   defp add_tweet(element, tweets) do
