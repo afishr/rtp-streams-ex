@@ -21,7 +21,7 @@ defmodule Server do
     msg =
       with {:ok, data} <- read_line(socket),
         {:ok, command} <- Command.parse(data),
-        do: Command.run(command)
+        do: Command.run(command, socket)
 
     write_line(socket, msg)
     serve(socket)
@@ -31,21 +31,25 @@ defmodule Server do
     :gen_tcp.recv(socket, 0)
   end
 
-  defp write_line(socket, {:ok, text}) do
+  def write_line(socket, {:ok, text}) do
     :gen_tcp.send(socket, text)
   end
 
-  defp write_line(socket, {:error, :unknown_command}) do
+  def write_line(socket, {:for_subscriber, text}) do
+    :gen_tcp.send(socket, text <> "\r\n")
+  end
+
+  def write_line(socket, {:error, :unknown_command}) do
     # Known error; write to the client
     :gen_tcp.send(socket, "UNKNOWN COMMAND\r\n")
   end
 
-  defp write_line(_socket, {:error, :closed}) do
+  def write_line(_socket, {:error, :closed}) do
     # The connection was closed, exit politely
     exit(:shutdown)
   end
 
-  defp write_line(socket, {:error, error}) do
+  def write_line(socket, {:error, error}) do
     # Unknown error; write to the client and exit
     :gen_tcp.send(socket, "ERROR\r\n")
     exit(error)
