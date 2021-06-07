@@ -12,17 +12,17 @@ defmodule RTP.Application do
         id: Aggregator,
         start: {Aggregator, :start, []}
       },
-      %{
-        id: DB,
-        start: {DB, :start, []}
-      },
+      # %{
+      #   id: DB,
+      #   start: {DB, :start, []}
+      # },
       %{
         id: Fetcher1,
-        start: {Fetcher, :init, ["localhost:4000/tweets/1"]}
+        start: {Fetcher, :init, ["server:4000/tweets/1"]}
       },
       %{
         id: Fetcher2,
-        start: {Fetcher, :init, ["localhost:4000/tweets/2"]}
+        start: {Fetcher, :init, ["server:4000/tweets/2"]}
       }
     ]
 

@@ -2,7 +2,9 @@ defmodule Aggregator do
   use GenServer
 
   def start() do
-    GenServer.start_link(__MODULE__, %{tweets: %{}}, name: __MODULE__)
+    {:ok, pid} = Client.start
+
+    GenServer.start_link(__MODULE__, %{tweets: %{}, tcp: pid}, name: __MODULE__)
   end
 
   @impl true
@@ -18,7 +20,9 @@ defmodule Aggregator do
   def handle_cast({:add, tweet}, state) do
     tweets = add_tweet(tweet, state.tweets)
 
-    {:noreply, %{tweets: tweets}}
+    Client.send_message(state.tcp, "PUBLISH tweeter " <> Poison.encode!(tweet) <> "\n")
+
+    {:noreply, %{tweets: tweets, tcp: state.tcp}}
   end
 
   defp add_tweet(element, tweets) do
@@ -38,9 +42,9 @@ defmodule Aggregator do
       existing_tweet = Map.put(existing_tweet, "sentiments_score", sentiments_score)
       existing_tweet = Map.put(existing_tweet, "engagement_score", engagement_score)
 
-      {user, message} = Map.pop(existing_tweet, "user")
+      # {user, message} = Map.pop(existing_tweet, "user")
 
-      DB.save_one(message, user)
+      # DB.save_one(message, user)
 
       Map.put(tweets, existing_tweet["id"], existing_tweet)
     end
